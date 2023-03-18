@@ -70,7 +70,10 @@ def add_pitch(kana, pitch):
     return ret
 
 def add_furigana(kanji, furiganas):
-    if len(kanji) == 0 or len(furiganas) == 0:
+    if len(kanji) == 0:
+        return ''
+    kanji = kanji[0]
+    if len(furiganas) == 0:
         return kanji
 
     ret = []
@@ -86,13 +89,25 @@ def add_furigana(kanji, furiganas):
 
 def get_fields(key):
     key = util.normalize_unicode(key)
-    # TODO: also normalize character set, e.g. shinjitai to traditional
     info = wiktionary.get_info(key)
     # TODO: pull pitch info from OJAD if Wiktionary doesn't have it
     # TODO: pull tags from Jisho
+
+    k = info['繁體']
+    if len(k) > 0:
+        k = k[0]
+    else:
+        k = info['新字体']
+        if len(k) > 0:
+            k = k[0]
+        else:
+            k = key
+    key = k
+
     pinyin = format_pinyin(info['拼音'], info['Key'])
     kana = add_pitch(info['かな'], info['pitch'])
     return {
+        'Key': key,
         '繁體': add_furigana(info['繁體'], pinyin),
         '简体': add_furigana(info['简体'], pinyin),
         '拼音': '\n'.join([' '.join(p) for p in pinyin]),

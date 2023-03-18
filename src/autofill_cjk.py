@@ -17,8 +17,7 @@ def autofill_cjk_card(addcards: aqt.addcards.AddCards):
     wiktionary.open(key)
 
     for fld in info:
-        if addcards.editor.note[fld] == '':
-            addcards.editor.note[fld] = info[fld]
+        addcards.editor.note[fld] = info[fld]
 
     if info['繁體'] != '':
         addcards.editor.note.tags.append('cn')
