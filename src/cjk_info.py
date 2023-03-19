@@ -1,5 +1,6 @@
 import re
 
+from . import jisho
 from . import util
 from . import wiktionary
 
@@ -91,7 +92,6 @@ def get_fields(key):
     key = util.normalize_unicode(key)
     info = wiktionary.get_info(key)
     # TODO: pull pitch info from OJAD if Wiktionary doesn't have it
-    # TODO: pull tags from Jisho
 
     k = info['繁體']
     if len(k) > 0:
@@ -104,6 +104,8 @@ def get_fields(key):
             k = key
     key = k
 
+    jinfo = jisho.get_info(info['新字体'])
+
     pinyin = format_pinyin(info['拼音'], info['Key'])
     kana = add_pitch(info['かな'], info['pitch'])
     return {
@@ -113,9 +115,13 @@ def get_fields(key):
         '拼音': '\n'.join([' '.join(p) for p in pinyin]),
         '白話字': info['白話字'],
         '粵拼': info['粵拼'],
+        'linedict-key': '',
         
         '新字体': add_furigana(info['新字体'], kana),
         'かな': '\n'.join([''.join(k) for k in kana]),
+        'jisho-key': jinfo['Key'],
+
+        'Tags': info['Tags'] | jinfo['Tags'],
     }
 
 if __name__ == '__main__':

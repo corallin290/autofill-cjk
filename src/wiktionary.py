@@ -90,25 +90,25 @@ def _get_cn_section(page, see_also=True):
         m = re.findall(_traditional_link_regex, matches[0])
         if len(m) != 0:
             page = requests.get('{}/{}'.format(WIKI_BASE_URL, m[0])).text
-            return re.findall(_cn_section_regex, page)[0]
+            return (re.findall(_cn_section_regex, page)[0], page)
         # Else it's probably the correct page
-        return matches[0]
+        return (matches[0], page)
 
     # see_also = False, so don't check the "See also" pages
     if not see_also:
-        return ''
+        return ('', '')
  
     see_also = re.findall(_see_also_regex, page)
     if len(see_also) == 0:
         # Case: no "See also" pages, so there's likely no Japanese equivalent
-        return ''
+        return ('', '')
     matches = re.findall(_see_also_link_regex, see_also[0])
     for link in matches:
         # Check if it's a CN page
         page = requests.get('{}/{}'.format(WIKI_BASE_URL, link)).text
-        cn_section = _get_cn_section(page, see_also=False)
+        cn_section, cn_page = _get_cn_section(page, see_also=False)
         if cn_section != '':
-            return cn_section
+            return (cn_section, cn_page)
 
     return ''
 
@@ -117,11 +117,11 @@ def _get_jp_section(page, see_also=True):
     matches = re.findall(_shinjitai_link_regex, page)
     if len(matches) != 0:
         page = requests.get('{}/{}'.format(WIKI_BASE_URL, matches[0])).text
-        return re.findall(_jp_section_regex, page)[0]
+        return (re.findall(_jp_section_regex, page)[0], page)
     # Else, check whether there's a "Japanese" header. If there is, we're probably good.
     matches = re.findall(_jp_section_regex, page)
     if len(matches) != 0:
-        return matches[0]
+        return (matches[0], page)
     
     # see_also = False, so don't check the "See also" pages
     if not see_also:
@@ -130,38 +130,40 @@ def _get_jp_section(page, see_also=True):
     see_also = re.findall(_see_also_regex, page)
     if len(see_also) == 0:
         # Case: no "See also" pages, so there's likely no Japanese equivalent
-        return ''
+        return ('', '')
     matches = re.findall(_see_also_link_regex, see_also[0])
     for link in matches:
         # Check whether it gives us a kyuujitai form or a "Japanese" header
         page = requests.get('{}/{}'.format(WIKI_BASE_URL, link)).text
-        jp_section = _get_jp_section(page, see_also=False)
+        jp_section, jp_page = _get_jp_section(page, see_also=False)
         if jp_section != '':
-            return jp_section
+            return (jp_section, jp_page)
     
     return ''
 
 def get_info(key):
     key = normalize_unicode(key)
-    info = {'Key': key}
+    info = {'Key': key, 'Tags': set()}
     page = requests.get('{}/wiki/{}'.format(WIKI_BASE_URL, key)).text
     # TODO: error handling
     
-    section = _get_cn_section(page)
+    section, page = _get_cn_section(page)
     if section == '':
         for field in _cn_fields:
             info[field] = ''
     else:
+        info['Tags'].add('cn')
         for field in _cn_fields:
             regex, process_func = _cn_fields[field]
             matches = re.findall(regex, section)
             info[field] = process_func(matches)
 
-    section = _get_jp_section(page)
+    section, _ = _get_jp_section(page)
     if section == '':
         for field in _jp_fields:
             info[field] = ''
     else:
+        info['Tags'].add('jp')
         for field in _jp_fields:
             if field in ['新字体', 'かな']:
                 regexes, process_func = _jp_fields[field]
@@ -183,6 +185,8 @@ def open(key):
     webbrowser.open(link)
     
 if __name__ == '__main__':
-    test_keys = ['物理', '戰爭', '戰鬥', '戰鬪', '伝統', '故郷', '為']
-    for key in test_keys:
-        print(get_info(key))
+    page = requests.get('{}/wiki/{}'.format(WIKI_BASE_URL, '團體')).text
+    print(_get_jp_section(page))
+#    test_keys = ['物理', '戰爭', '戰鬥', '戰鬪', '伝統', '故郷', '為', '团体']
+#    for key in test_keys:
+#        print(get_info(key))

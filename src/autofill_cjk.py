@@ -5,6 +5,7 @@ from aqt.utils import qconnect
 from aqt.qt import *
 
 from . import cjk_info
+from . import jisho
 from . import wiktionary
 
 def autofill_cjk_card(addcards: aqt.addcards.AddCards):
@@ -14,15 +15,19 @@ def autofill_cjk_card(addcards: aqt.addcards.AddCards):
         return
     info = cjk_info.get_fields(key)
 
-    wiktionary.open(key)
+    wiktionary.open(info['Key'])
+    if info['jisho-key'] != '':
+        jisho.open(info['jisho-key'])
+    if info['linedict-key'] != '':
+        # TODO: open linedict
+        pass
 
     for fld in info:
-        addcards.editor.note[fld] = info[fld]
+        if fld in addcards.editor.note.keys():
+            addcards.editor.note[fld] = info[fld]
 
-    if info['繁體'] != '':
-        addcards.editor.note.tags.append('cn')
-    if info['新字体'] != '':
-        addcards.editor.note.tags.append('jp')
+
+    addcards.editor.note.tags = list(set(addcards.editor.note.tags) | info['Tags'])
 
     addcards.editor.loadNoteKeepingFocus()
 
