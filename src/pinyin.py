@@ -24,30 +24,33 @@ _pinyin_syllables = [
 ]
 _diacritic_table = {'\u0304': 1, '\u0301': 2, '\u030c': 3, '\u0300': 4}
 
-def _match(syllable, text):
+def _match(syllable, text, diacritic):
     tone = 5
     si = 0
     ti = 0
     while si < len(syllable) and ti < len(text):
         if text[ti] in _diacritic_table:
             if tone != 5:
-                return ''
+                return None
             tone = _diacritic_table[text[ti]]
             ti += 1
         else:
             if text[ti] != syllable[si]:
-                return ''
+                return None
             si += 1
             ti += 1
     if si < len(syllable):
-        return ''
+        return None
     if ti < len(text) and text[ti] in _diacritic_table:
         if tone != 5:
-            return ''
+            return None
         tone = _diacritic_table[text[ti]]
-    return syllable + str(tone)
+        ti += 1
+    if diacritic:
+        return (text[:ti], text[ti:])
+    return (syllable + str(tone), text[ti:])
     
-def split(text):
+def split(text, diacritic=False):
     text = [(text.lower(), [])]
     candidates = []
     while len(text) != 0:
@@ -56,13 +59,9 @@ def split(text):
             candidates.append(acc)
             continue
         for c in _pinyin_syllables:
-            res = _match(c, t)
-            if res != '':
-                if res[-1] == 5:
-                    next_t = t[len(res)-1:]
-                else:
-                    next_t = t[len(res):]
-                text.append((next_t, acc + [res]))
+            res = _match(c, t, diacritic)
+            if res != None:
+                text.append((res[1], acc + [res[0]]))
     return candidates
 
 if __name__ == '__main__':
@@ -71,3 +70,4 @@ if __name__ == '__main__':
     test_words = [util.normalize_unicode(elt) for elt in test_words]
     for test in test_words:
         print(split(test))
+        print(split(test, diacritic=True))
