@@ -65,7 +65,7 @@ _cn_fields = {
         _process_pinyin),
     '白話字': (re.compile(r'<li><a href="https:\/\/en\.wikipedia\.org\/wiki\/Min_Nan" class="extiw" title="w:Min Nan">Min Nan<\/a> <small>\(<i><a href="https:\/\/en\.wikipedia\.org\/wiki\/Pe%CC%8Dh-%C5%8De-j%C4%AB" class="extiw" title="w:Pe̍h-ōe-jī">POJ<\/a><\/i>\)<\/small>: <span style="font-family: Consolas, monospace;">(.+?)<\/span>'),
         _process_poj),
-    '粵拼': (re.compile(r'<li><a href="https:\/\/en\.wikipedia\.org\/wiki\/Cantonese" class="extiw" title="w:Cantonese">Cantonese<\/a> <small>\(<i><a href="https:\/\/en\.wikipedia\.org\/wiki\/Jyutping" class="extiw" title="w:Jyutping">Jyutping<\/a><\/i>\)<\/small>: <span style="font-family: Consolas, monospace;">(.+?)<\/span>'),
+    '粵拼': (re.compile(r'<li><a href="https:\/\/en\.wikipedia\.org\/wiki\/Cantonese" class="extiw" title="w:Cantonese">Cantonese<\/a>[\s\S]*?<a href="https:\/\/en\.wikipedia\.org\/wiki\/Jyutping" class="extiw" title="w:Jyutping">Jyutping<\/a><\/i>\)<\/small>: <span style="font-family: Consolas, monospace;">(.+?)<\/span>'),
         _process_jyutping)
 }
 
