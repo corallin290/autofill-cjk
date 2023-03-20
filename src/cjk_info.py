@@ -108,6 +108,12 @@ def get_fields(key):
 
     pinyin = format_pinyin(info['拼音'], info['Key'])
     kana = add_pitch(info['かな'], info['pitch'])
+    linedict_key = ''
+    if len(info['简体']) != 0:
+        linedict_key = info['简体'][0]
+    elif len(info['繁體']) != 0:
+        linedict_key = info['繁體'][0]
+
     return {
         'Key': key,
         '繁體': add_furigana(info['繁體'], pinyin),
@@ -115,7 +121,7 @@ def get_fields(key):
         '拼音': '\n'.join([' '.join(p) for p in pinyin]),
         '白話字': info['白話字'],
         '粵拼': info['粵拼'],
-        'linedict-key': '',
+        'linedict-key': linedict_key,
         
         '新字体': add_furigana(info['新字体'], kana),
         'かな': '\n'.join([''.join(k) for k in kana]),

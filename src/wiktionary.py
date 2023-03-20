@@ -185,8 +185,6 @@ def open(key):
     webbrowser.open(link)
     
 if __name__ == '__main__':
-    page = requests.get('{}/wiki/{}'.format(WIKI_BASE_URL, '團體')).text
-    print(_get_jp_section(page))
-#    test_keys = ['物理', '戰爭', '戰鬥', '戰鬪', '伝統', '故郷', '為', '团体']
-#    for key in test_keys:
-#        print(get_info(key))
+    test_keys = ['物理', '戰爭', '戰鬥', '戰鬪', '伝統', '故郷', '為', '团体']
+    for key in test_keys:
+        print(get_info(key))

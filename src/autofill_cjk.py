@@ -6,6 +6,7 @@ from aqt.qt import *
 
 from . import cjk_info
 from . import jisho
+from . import linedict
 from . import wiktionary
 
 def autofill_cjk_card(addcards: aqt.addcards.AddCards):
@@ -19,13 +20,11 @@ def autofill_cjk_card(addcards: aqt.addcards.AddCards):
     if info['jisho-key'] != '':
         jisho.open(info['jisho-key'])
     if info['linedict-key'] != '':
-        # TODO: open linedict
-        pass
+        linedict.open(info['linedict-key'])
 
     for fld in info:
         if fld in addcards.editor.note.keys():
             addcards.editor.note[fld] = info[fld]
-
 
     addcards.editor.note.tags = list(set(addcards.editor.note.tags) | info['Tags'])
 
