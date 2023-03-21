@@ -18,11 +18,11 @@ def autofill_cjk_card(addcards: aqt.addcards.AddCards):
         return
     info = cjk_info.get_fields(key)
 
+    if info['linedict-key'] != '':
+        linedict.open(info['linedict-key'])
     wiktionary.open(info['Key'])
     if info['jisho-key'] != '':
         jisho.open(info['jisho-key'])
-    if info['linedict-key'] != '':
-        linedict.open(info['linedict-key'])
 
     for fld in info:
         if fld in addcards.editor.note.keys():
