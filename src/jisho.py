@@ -21,7 +21,8 @@ def get_info(key):
     }
     if len(key) == 0:
         return info
-    key = key[0]
+    if isinstance(key, list):
+        key = key[0]
 
     page = requests.get(_word(key))
     if page.status_code < 200 or page.status_code >= 300:

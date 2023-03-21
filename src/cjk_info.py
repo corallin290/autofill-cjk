@@ -93,18 +93,22 @@ def get_fields(key):
     info = wiktionary.get_info(key)
     # TODO: pull pitch info from OJAD if Wiktionary doesn't have it
 
-    k = info['繁體']
-    if len(k) > 0:
-        k = k[0]
-    else:
-        k = info['新字体']
+    if info['Key'] != '':
+        k = info['繁體']
         if len(k) > 0:
             k = k[0]
         else:
-            k = key
-    key = k
+            k = info['新字体']
+            if len(k) > 0:
+                k = k[0]
+            else:
+                k = key
+        key = k
 
-    jinfo = jisho.get_info(info['新字体'])
+    shinjitai = key
+    if len(info['新字体']) != 0:
+        shinjitai = info['新字体']
+    jinfo = jisho.get_info(shinjitai)
 
     pinyin = format_pinyin(info['拼音'], info['Key'])
     kana = add_pitch(info['かな'], info['pitch'])

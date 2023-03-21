@@ -10,7 +10,9 @@ from . import linedict
 from . import wiktionary
 
 def autofill_cjk_card(addcards: aqt.addcards.AddCards):
-    # TODO: check that it is a cjk card
+    if addcards.editor.note.note_type()['name'] != '漢字':
+        return
+
     key = addcards.editor.note['Key']
     if key == "":
         return

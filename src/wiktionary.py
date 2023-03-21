@@ -141,17 +141,35 @@ def _get_jp_section(page, see_also=True):
     
     return ''
 
+"""
+Return map with wiktionary metadata. Empty fields will contain empty strings.
+`Key` will be an empty string if an error occurs when retrieving the page.
+Example output:
+{
+    'Key': '戰爭', 'Tags': {'jp', 'cn'},
+    '繁體': ['戰爭'], '简体': ['战争'], '拼音': [['zhan4', 'zheng1']],
+    '白話字': 'chiàn-chng / chiàn-cheng', '粵拼': 'zin3 zang1',
+    '新字体': ['戦争'], 'かな': [['せん', 'そう']],
+    'pitch': [[(0, 'せ'), (1, 'んそー')]]
+}
+"""
 def get_info(key):
+    info = {'Key': '', 'Tags': set()}
+    for field in _cn_fields:
+        info[field] = ''
+    for field in _jp_fields:
+        info[field] = []
+
     key = normalize_unicode(key)
-    info = {'Key': key, 'Tags': set()}
-    page = requests.get('{}/wiki/{}'.format(WIKI_BASE_URL, key)).text
-    # TODO: error handling
+    page = requests.get('{}/wiki/{}'.format(WIKI_BASE_URL, key))
+    if page.status_code < 200 or page.status_code >= 300:
+        return info
+    page = page.text
+
+    info['Key'] = key
     
     section, page = _get_cn_section(page)
-    if section == '':
-        for field in _cn_fields:
-            info[field] = ''
-    else:
+    if section != '':
         info['Tags'].add('cn')
         for field in _cn_fields:
             regex, process_func = _cn_fields[field]
@@ -159,10 +177,7 @@ def get_info(key):
             info[field] = process_func(matches)
 
     section, _ = _get_jp_section(page)
-    if section == '':
-        for field in _jp_fields:
-            info[field] = ''
-    else:
+    if section != '':
         info['Tags'].add('jp')
         for field in _jp_fields:
             if field in ['新字体', 'かな']:
