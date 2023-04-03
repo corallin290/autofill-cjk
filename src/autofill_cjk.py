@@ -7,6 +7,7 @@ from aqt.qt import *
 from . import cjk_info
 from . import jisho
 from . import linedict
+from . import ojad
 from . import wiktionary
 
 def autofill_cjk_card(addcards: aqt.addcards.AddCards):
@@ -21,6 +22,8 @@ def autofill_cjk_card(addcards: aqt.addcards.AddCards):
     if info['linedict-key'] != '':
         linedict.open(info['linedict-key'])
     wiktionary.open(info['Key'])
+    if info['ojad-key'] != '':
+        ojad.open(info['ojad-key'])
     if info['jisho-key'] != '':
         jisho.open(info['jisho-key'])
 
