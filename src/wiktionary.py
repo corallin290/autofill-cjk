@@ -96,21 +96,21 @@ def _get_cn_section(page, see_also=True):
 
     # see_also = False, so don't check the "See also" pages
     if not see_also:
-        return ('', '')
+        return ('', page)
  
     see_also = re.findall(_see_also_regex, page)
     if len(see_also) == 0:
         # Case: no "See also" pages, so there's likely no Japanese equivalent
-        return ('', '')
+        return ('', page)
     matches = re.findall(_see_also_link_regex, see_also[0])
     for link in matches:
         # Check if it's a CN page
-        page = requests.get('{}/{}'.format(WIKI_BASE_URL, link)).text
-        cn_section, cn_page = _get_cn_section(page, see_also=False)
+        cn_page = requests.get('{}/{}'.format(WIKI_BASE_URL, link)).text
+        cn_section, cn_page = _get_cn_section(cn_page, see_also=False)
         if cn_section != '':
             return (cn_section, cn_page)
 
-    return ''
+    return ('', page)
 
 def _get_jp_section(page, see_also=True):
     # If the page says it's the kyuujitai form, then follow the link to the shinjitai form
@@ -125,7 +125,7 @@ def _get_jp_section(page, see_also=True):
     
     # see_also = False, so don't check the "See also" pages
     if not see_also:
-        return ''
+        return ('', page)
     
     see_also = re.findall(_see_also_regex, page)
     if len(see_also) == 0:
@@ -134,12 +134,12 @@ def _get_jp_section(page, see_also=True):
     matches = re.findall(_see_also_link_regex, see_also[0])
     for link in matches:
         # Check whether it gives us a kyuujitai form or a "Japanese" header
-        page = requests.get('{}/{}'.format(WIKI_BASE_URL, link)).text
-        jp_section, jp_page = _get_jp_section(page, see_also=False)
+        jp_page = requests.get('{}/{}'.format(WIKI_BASE_URL, link)).text
+        jp_section, jp_page = _get_jp_section(jp_page, see_also=False)
         if jp_section != '':
             return (jp_section, jp_page)
     
-    return ''
+    return ('', page)
 
 """
 Return map with wiktionary metadata. Empty fields will contain empty strings.
@@ -200,6 +200,6 @@ def open(key):
     webbrowser.open(link)
     
 if __name__ == '__main__':
-    test_keys = ['物理', '戰爭', '戰鬥', '戰鬪', '伝統', '故郷', '為', '团体']
+    test_keys = ['物理', '戰爭', '戰鬥', '戰鬪', '伝統', '故郷', '為', '团体', '充実']
     for key in test_keys:
         print(get_info(key))
