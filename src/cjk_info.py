@@ -86,7 +86,7 @@ def add_furigana(kanji, furiganas):
             ret.append(with_furi)
         else:
             ret.append('{}[{}]'.format(kanji, ''.join(furigana)))
-    return '\n'.join(ret)
+    return '<br>'.join(ret)
 
 def get_fields(key):
     key = util.normalize_unicode(key)
@@ -125,13 +125,13 @@ def get_fields(key):
         'Key': key,
         '繁體': add_furigana(info['繁體'], pinyin),
         '简体': add_furigana(info['简体'], pinyin),
-        '拼音': '\n'.join([' '.join(p) for p in pinyin]),
+        '拼音': '<br>'.join([' '.join(p) for p in pinyin]),
         '白話字': info['白話字'],
         '粵拼': info['粵拼'],
         'linedict-key': linedict_key,
         
         '新字体': add_furigana(info['新字体'], kana),
-        'かな': '\n'.join([''.join(k) for k in kana]),
+        'かな': '<br>'.join([''.join(k) for k in kana]),
         'jisho-key': jinfo['Key'],
         'ojad-key': ojad_key,
 
