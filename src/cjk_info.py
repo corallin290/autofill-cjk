@@ -117,6 +117,9 @@ def get_fields(key):
         linedict_key = info['简体'][0]
     elif len(info['繁體']) != 0:
         linedict_key = info['繁體'][0]
+    ojad_key = ''
+    if len(info['pitch']) == 0:
+        ojad_key = jinfo['Key']
 
     return {
         'Key': key,
@@ -130,6 +133,7 @@ def get_fields(key):
         '新字体': add_furigana(info['新字体'], kana),
         'かな': '\n'.join([''.join(k) for k in kana]),
         'jisho-key': jinfo['Key'],
+        'ojad-key': ojad_key,
 
         'Tags': info['Tags'] | jinfo['Tags'],
     }
